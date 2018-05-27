@@ -1,25 +1,27 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
 import './app.global.css';
-
-const store = configureStore();
+import { HashRouter as Router, Route } from "react-keeper";
+import App from './render/app'
 
 render(
   <AppContainer>
-    <Root store={store} history={history} />
+    <Router>
+      <Route index path="/" component={App}/>
+    </Router>
   </AppContainer>,
   document.getElementById('root')
 );
 
 if (module.hot) {
-  module.hot.accept('./containers/Root', () => {
-    const NextRoot = require('./containers/Root'); // eslint-disable-line global-require
+  module.hot.accept("./render/app", () => {
+    const NextRoot = require("./render/app").default; // eslint-disable-line global-require
     render(
       <AppContainer>
-        <NextRoot store={store} history={history} />
+        <Router>
+          <Route index path="/" component={NextRoot}/>
+        </Router>
       </AppContainer>,
       document.getElementById('root')
     );
