@@ -4,6 +4,7 @@ import { AppContainer } from 'react-hot-loader';
 import './app.global.css';
 import { HashRouter as Router, Route } from "react-keeper";
 import App from './render/app'
+import './custom.less'
 
 render(
   <AppContainer>

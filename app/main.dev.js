@@ -1,5 +1,4 @@
 import { app, BrowserWindow } from 'electron';
-import * as Splashscreen from "@trodi/electron-splashscreen";
 
 let mainWindow = null;
 
@@ -48,25 +47,26 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
-  // mainWindow = new BrowserWindow({
-  //   show: false,
-  //   width: 1024,
-  //   height: 728
-  // });
-
-  mainWindow = Splashscreen.initSplashScreen({
-    windowOpts: {
-      show: false,
-      width: 800,
-      height: 600,
-      title: "管理学院资助信息管理系统",
-    },
-    templateUrl: `file://${__dirname}/splash-screen.html`,
-    splashScreenOpts: {
-      width: 425,
-      height: 325,
-    },
+  mainWindow = new BrowserWindow({
+    show: false,
+    width: 800,
+    height: 600,
+    title: "管理学院资助信息管理系统",
   });
+  //
+  // mainWindow = Splashscreen.initSplashScreen({
+  //   windowOpts: {
+  //     show: false,
+  //     width: 800,
+  //     height: 600,
+  //     title: "管理学院资助信息管理系统",
+  //   },
+  //   templateUrl: `file://${__dirname}/splash-screen.html`,
+  //   splashScreenOpts: {
+  //     width: 425,
+  //     height: 325,
+  //   },
+  // });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 

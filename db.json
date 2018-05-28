@@ -1,7 +1,15 @@
 {
-  "classes": [],
+  "classes": [
+    {
+      "name": "国家资助",
+      "tables": [
+        "励志奖学金"
+      ]
+    }
+  ],
   "tables": [
-    "食堂补贴2"
+    "励志奖学金",
+    "食堂补贴T"
   ],
   "specificTables": [
     "国家励志奖学金",

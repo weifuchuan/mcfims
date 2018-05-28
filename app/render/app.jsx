@@ -1,13 +1,16 @@
-import './store'
-import React from 'react';
-import {observable} from "mobx"
-import {observer} from 'mobx-react'
-import {Layout, Menu,} from "antd";
-import { Route, Control} from "react-keeper";
+import "./store";
+import React from "react";
+import { observable } from "mobx";
+import { observer } from "mobx-react";
+import { Layout, Menu } from "antd";
+import { Route, Control } from "react-keeper";
 import TableManager from "./components/TableManager";
-import Search from "./components/Search"
+import Search from "./components/Search";
+import LOGO_IMG from './assert/logo';
 
-const {Header} = Layout;
+const store = window.store;
+
+const { Header } = Layout;
 
 export default observer(class App extends React.Component {
 
@@ -15,10 +18,10 @@ export default observer(class App extends React.Component {
     super(props);
 
     this.selfState = observable.object({
-      selectedKeys: ["1"],
+      selectedKeys: ["1"]
     });
 
-    this.onMenuItemClick = ({key}) => {
+    this.onMenuItemClick = ({ key }) => {
       if (this.selfState.selectedKeys[0] === key) {
         return;
       }
@@ -26,10 +29,12 @@ export default observer(class App extends React.Component {
         case "1":
           Control.go("/manager");
           this.selfState.selectedKeys = observable.array(["1"]);
+          store.selectedSearch = false;
           break;
         case "2":
           Control.go("/search");
           this.selfState.selectedKeys = observable.array(["2"]);
+          store.selectedSearch = true;
           break;
         default:
       }
@@ -39,19 +44,19 @@ export default observer(class App extends React.Component {
   render() {
     return (
       <Layout style={{
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         flex: 1,
         flexDirection: "column",
         display: "flex"
       }}>
         <Header>
-          <img style={{height: "100%", float: "left", marginRight: "40px"}} src="./assert/logo.png"/>
+          <img style={{ height: "100%", float: "left", marginRight: "40px" }} src={LOGO_IMG}/>
           <Menu
             theme="dark"
             mode="horizontal"
             selectedKeys={this.selfState.selectedKeys.slice()}
-            style={{lineHeight: '64px', height: "64px"}}
+            style={{ lineHeight: "64px", height: "64px" }}
             onClick={this.onMenuItemClick}
           >
             <Menu.Item key="1">数据表管理</Menu.Item>
@@ -76,4 +81,4 @@ export default observer(class App extends React.Component {
   componentDidMount() {
 
   }
-})
+});

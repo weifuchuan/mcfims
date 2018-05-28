@@ -9,7 +9,8 @@ import {
   GET_TABLE_DATA,
   SAVE_TABLE_NAME_CHANGE,
   SAVE_TABLE_DATA_CHANGE,
-  DELETE_TABLE
+  DELETE_TABLE,
+  GET_TABLE_FIELD
 } from '../../common/channel'
 import {
   getClasses,
@@ -19,7 +20,8 @@ import {
   getTableData,
   saveTableNameChange,
   saveTableDataChange,
-  deleteTable
+  deleteTable,
+  getTableField
 } from "../handler"
 
 ipcMain.on(GET_CLASSES, getClasses);
@@ -30,3 +32,4 @@ ipcMain.on(GET_TABLE_DATA, getTableData);
 ipcMain.on(SAVE_TABLE_NAME_CHANGE, saveTableNameChange);
 ipcMain.on(SAVE_TABLE_DATA_CHANGE, saveTableDataChange);
 ipcMain.on(DELETE_TABLE, deleteTable);
+ipcMain.on(GET_TABLE_FIELD,getTableField);

@@ -154,7 +154,7 @@ export default observer(class ClassManager extends React.Component {
                     }}>删除</a>} style={{width: "100%"}}>
                       <div style={{display: "flex", flexWrap: "wrap",}}>
                         {
-                          cls.tables.map((t, i) => (<Button key={i}>{t}</Button>))
+                          cls.tables.map((t, i) => (<Button type={"primary"} key={i}>{t}</Button>))
                         }
                       </div>
                     </Card>
@@ -167,7 +167,7 @@ export default observer(class ClassManager extends React.Component {
                     this.selfState.tables
                       .filter(t => this.selfState.tableToClass.get(t) === undefined)
                       .map((t, i) => (
-                        <Button key={i}>{t}</Button>)
+                        <Button type={"primary"} key={i}>{t}</Button>)
                       )
                   }
                 </div>

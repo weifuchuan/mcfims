@@ -1,6 +1,6 @@
 import {
   observable
-} from 'mobx'
+} from "mobx";
 import {
   ipcRenderer
 } from "electron";
@@ -15,14 +15,15 @@ const store = observable({
   specificTables: [],
   goTableState: {
     forceUpdateTableComponent: false,
-    shouldVisitTable: '',
+    shouldVisitTable: ""
   },
+  selectedSearch: false,
   get otherTables() {
     const set = new Set();
     this.classes.forEach(c => {
       c.tables.forEach(t => {
         set.add(t);
-      })
+      });
     });
     return this.tables.filter(t => !set.has(t));
   },
@@ -33,7 +34,7 @@ const store = observable({
         map.set(t, c);
       });
     });
-    return map; 
+    return map;
   }
 });
 
