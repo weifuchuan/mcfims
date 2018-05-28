@@ -5,16 +5,11 @@ import { Collapse, Layout, Input, Card, Tag, Menu } from "antd";
 import ScrollArea from "react-scrollbar";
 import ModalLoading from "../ModalLoading";
 import { ipcRenderer } from "electron";
-import { GET_TABLE_FIELD, GET_TABLE_FIELD_RETURN } from "../../../common/channel";
+import { SEARCH, SEARCH_RETURN } from "../../../common/channel";
 import _ from "lodash";
-import { WithContext as ReactTags } from "react-tag-input";
-import matchSorter from "match-sorter";
-import Sider from './Sider';
-import SEARCH_TYPE from '../../../common/searchType';
+import Sider from "./Sider";
+import SEARCH_TYPE from "../../../common/searchType";
 
-const { SubMenu, Item } = Menu;
-const ISearch = Input.Search;
-const { Panel } = Collapse;
 const store = window.store;
 
 export default observer(
@@ -24,11 +19,25 @@ export default observer(
       super(props);
 
       this.state = observable({
-        handling: false,
+        handling: false
 
       });
 
-      this.search = ()=>{};
+      this.search = (type, key, data) => {
+        switch (type) {
+          case SEARCH_TYPE.COMMON:
+            // [{table, field}]
+            const t2fs = {};
+            data.forEach(v => {
+              const t = v.table.trim();
+              if (!(t in t2fs)) {
+                t2fs[t] = [];
+              }
+              t2fs[t].push(v.field.trim());
+            });
+            ipcRenderer.send(SEARCH, { type, key, data: t2fs });
+        }
+      };
     }
 
     render() {
@@ -50,7 +59,6 @@ export default observer(
     }
 
     componentDidMount() {
-      ipcRenderer.send(GET_TABLE_FIELD);
     }
   }
 );

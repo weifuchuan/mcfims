@@ -24,5 +24,7 @@ export const DELETE_TABLE_RETURN = "deleteTableReturn"; // {ok: Bool, err?}
 
 export const GET_TABLE_FIELD = "getTableField"; //
 // [{ table: String, fields: [field1, field2, ...]}]
-export const GET_TABLE_FIELD_RETURN = "getTableFieldReturn"; 
+export const GET_TABLE_FIELD_RETURN = "getTableFieldReturn";
 
+export const SEARCH = 'search';
+export const SEARCH_RETURN = 'searchReturn';

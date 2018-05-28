@@ -16,8 +16,23 @@ import {
   SAVE_TABLE_NAME_CHANGE_RETURN,
   DELETE_TABLE_RETURN,
   SAVE_TABLE_DATA_CHANGE_RETURN,
-  GET_TABLE_FIELD_RETURN
+  GET_TABLE_FIELD_RETURN,
+  SEARCH_RETURN
 } from "../../common/channel";
+import SEARCH_TYPE from "../../common/searchType";
+
+export {
+  getClasses,
+  addExcelFile,
+  saveTable,
+  saveClassChange,
+  getTableData,
+  saveTableNameChange,
+  saveTableDataChange,
+  deleteTable,
+  getTableField,
+  search
+};
 
 const cache = LRU({
   max: 20,
@@ -32,7 +47,7 @@ const numberRegExp = /^[0-9]{1,8}(\.[0-9]+)?$/;
 const intRegExp = /^[0-9]+$/;
 
 // resp: { classes:[], tables:[], specificTables:[] }
-export function getClasses(e) {
+function getClasses(e) {
   const classes = ddb.get("classes").value();
   const tables = ddb.get("tables").value();
   const specificTables = ddb.get("specificTables").value();
@@ -44,7 +59,7 @@ export function getClasses(e) {
 }
 
 // {err?, data: TableData, name: TableName, columns: TableColumnNames}
-export function addExcelFile(e, filePath) {
+function addExcelFile(e, filePath) {
   const {
     name
   } = path.parse(filePath);
@@ -95,8 +110,7 @@ export function addExcelFile(e, filePath) {
 }
 
 // {err?, createOk: Bool, insertOk: Bool}
-export function saveTable(e, name, theClass) {
-  store.delete(LAST_GET_TABLE_FIELD);
+function saveTable(e, name, theClass) {
   const {
     data,
     columns,
@@ -125,7 +139,6 @@ export function saveTable(e, name, theClass) {
         createOk: true,
         insertOk: true
       });
-      saveDatabase();
     } catch (err) {
       console.error(err);
       e.sender.send(SAVE_TABLE_RETURN, {
@@ -143,8 +156,10 @@ export function saveTable(e, name, theClass) {
   }
 }
 
+saveTable = aopRemoveStore(aopSaveDatabase(saveTable), () => LAST_GET_TABLE_FIELD);
+
 // {ok: Bool}
-export function saveClassChange(e, {
+function saveClassChange(e, {
   classes
 }) {
   ddb.set("classes", classes).write();
@@ -154,7 +169,7 @@ export function saveClassChange(e, {
 }
 
 // {err?, columns:[String], data:[Row]}
-export function getTableData(e, table) {
+function getTableData(e, table) {
   const c = cache.get(`getTableData:${table}`);
   if (c) {
     e.sender.send(GET_TABLE_DATA_RETURN, c);
@@ -195,11 +210,10 @@ export function getTableData(e, table) {
 }
 
 // {ok: Bool}
-export function saveTableNameChange(e, {
+function saveTableNameChange(e, {
   oldName,
   newName
 }) {
-  store.delete(LAST_GET_TABLE_FIELD);
   try {
     db.exec(`ALTER TABLE "${oldName.trim()}" RENAME TO "${newName.trim()}"`);
     const classes = ddb.get("classes").value();
@@ -220,7 +234,6 @@ export function saveTableNameChange(e, {
     e.sender.send(SAVE_TABLE_NAME_CHANGE_RETURN, {
       ok: true
     });
-    saveDatabase();
   } catch (err) {
     console.error(err);
     e.sender.send(SAVE_TABLE_NAME_CHANGE_RETURN, {
@@ -230,13 +243,16 @@ export function saveTableNameChange(e, {
   }
 }
 
+saveTableNameChange = aopRemoveStore(
+  aopSaveDatabase(saveTableNameChange), () => LAST_GET_TABLE_FIELD);
+
 // {ok: Bool, err?}
-export function saveTableDataChange(e, {
+function saveTableDataChange(e, {
   data,
   columns,
   table
 }) {
-  store.delete(LAST_GET_TABLE_FIELD);
+
   try {
     db.run(`delete from "${table}"`);
     const tableD = sql.define({
@@ -258,7 +274,6 @@ export function saveTableDataChange(e, {
         columns,
         data
       });
-      saveDatabase();
     } catch (err) {
       console.error(err);
       e.sender.send(SAVE_TABLE_DATA_CHANGE_RETURN, {
@@ -275,9 +290,11 @@ export function saveTableDataChange(e, {
   }
 }
 
+saveTableDataChange = aopRemoveStore(
+  aopSaveDatabase(saveTableDataChange), () => LAST_GET_TABLE_FIELD);
+
 // {ok: Bool, err?}
-export function deleteTable(e, table) {
-  store.delete(LAST_GET_TABLE_FIELD);
+function deleteTable(e, table) {
   try {
     db.run(`drop table "${table.trim()}"`);
     ddb.get("tables").remove(t => t === table).write();
@@ -295,8 +312,10 @@ export function deleteTable(e, table) {
   }
 }
 
+deleteTable = aopRemoveStore(aopSaveDatabase(deleteTable), () => LAST_GET_TABLE_FIELD);
+
 // [{ table: String, fields: [field1, field2, ...]}]
-export function getTableField(e) {
+function getTableField(e) {
   if (store.has(LAST_GET_TABLE_FIELD)) {
     e.sender.send(GET_TABLE_FIELD_RETURN, store.get(LAST_GET_TABLE_FIELD));
     return;
@@ -318,4 +337,25 @@ export function getTableField(e) {
   });
   store.set(LAST_GET_TABLE_FIELD, tableFields);
   e.sender.send(GET_TABLE_FIELD_RETURN, tableFields);
+}
+
+function search(e, { type, key, data }) {
+  switch (type) {
+    case SEARCH_TYPE.COMMON:
+
+  }
+}
+
+function aopSaveDatabase(func) {
+  return function() {
+    func(...arguments);
+    saveDatabase();
+  };
+}
+
+function aopRemoveStore(func, getKey = (args/*: []*/) => "") {
+  return function() {
+    func(...arguments);
+    store.delete(getKey(arguments));
+  };
 }
