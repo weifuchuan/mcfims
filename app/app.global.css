@@ -15185,6 +15185,7 @@ textarea.ant-input-number {
   line-height: 22px;
 }
 .ant-list-item-content {
+  width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;

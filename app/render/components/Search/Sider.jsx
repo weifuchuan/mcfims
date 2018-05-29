@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { observable } from "mobx";
+import { observable,autorun } from "mobx";
 import { Collapse, Layout, Input, Card, Tag, Menu } from "antd";
 import { ipcRenderer } from "electron";
 import { GET_TABLE_FIELD, GET_TABLE_FIELD_RETURN } from "../../../common/channel";
@@ -75,6 +75,13 @@ export default observer(
           });
         });
         this.state.suggestions = suggestions;
+      });
+
+      autorun(()=>{
+        if(store.selectedSearch){
+          ipcRenderer.send(GET_TABLE_FIELD);
+          store.selectedSearch=false;
+        }
       });
 
       this.onOpenChange = (type, openKeys) => {

@@ -10,7 +10,7 @@ export const SAVE_TABLE_RETURN = "saveTableReturn"; // {err?, createOk: Bool, in
 export const SAVE_CLASS_CHANGE = "saveClassChange"; // {classes: []}
 export const SAVE_CLASS_CHANGE_RETURN = "saveClassChangeReturn"; // {ok: Bool}
 
-export const GET_TABLE_DATA = "getTableData"; // table: String
+export const GET_TABLE_DATA = "getTableData"; // tableName: String
 export const GET_TABLE_DATA_RETURN = "getTableDataReturn"; // {err?, columns:[String], data:[Row]}
 
 export const SAVE_TABLE_NAME_CHANGE = 'saveTableNameChange'; // {newName, oldName}
@@ -26,5 +26,5 @@ export const GET_TABLE_FIELD = "getTableField"; //
 // [{ table: String, fields: [field1, field2, ...]}]
 export const GET_TABLE_FIELD_RETURN = "getTableFieldReturn";
 
-export const SEARCH = 'search';
+export const SEARCH = 'search'; // { type: SEARCH_TYPE.COMMON, key: String, data: {<table>: [] fields } }
 export const SEARCH_RETURN = 'searchReturn';
