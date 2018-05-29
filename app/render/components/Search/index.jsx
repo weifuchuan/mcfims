@@ -5,7 +5,11 @@ import { Collapse, Layout, Input, Card, Tag, Menu } from "antd";
 import ScrollArea from "react-scrollbar";
 import ModalLoading from "../ModalLoading";
 import { ipcRenderer } from "electron";
-import { SEARCH, SEARCH_RETURN, GET_TABLE_FIELD } from "../../../common/channel";
+import {
+  SEARCH,
+  SEARCH_RETURN,
+  GET_TABLE_FIELD
+} from "../../../common/channel";
 import _ from "lodash";
 import Sider from "./Sider";
 import SEARCH_TYPE from "../../../common/searchType";
@@ -15,7 +19,6 @@ const store = window.store;
 
 export default observer(
   class Search extends React.Component {
-
     constructor(props) {
       super(props);
 
@@ -60,22 +63,21 @@ export default observer(
     render() {
       return (
         <Layout className={"full"}>
-          <Layout.Sider width={260} style={{backgroundColor:"#fff"}}>
+          <Layout.Sider width={260} style={{ backgroundColor: "#fff" }}>
             <ScrollArea style={{ width: "100%", height: "100%" }}>
-              <Sider onSearch={this.search}/>
+              <Sider onSearch={this.search} />
             </ScrollArea>
           </Layout.Sider>
           <Layout.Content className={"full"}>
             <ScrollArea style={{ width: "100%", height: "100%" }}>
-              <Content searchResult={this.state.lastSearchResult}/>
+              <Content searchResult={this.state.lastSearchResult} />
             </ScrollArea>
           </Layout.Content>
-          <ModalLoading loading={this.state.handling} title={"处理中..."}/>
+          <ModalLoading loading={this.state.handling} title={"处理中..."} />
         </Layout>
       );
     }
 
-    componentDidMount() {
-    }
+    componentDidMount() {}
   }
 );

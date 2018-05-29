@@ -1,9 +1,6 @@
 import XLSX from "xlsx";
 import path from "path";
-import {
-  db,
-  ddb
-} from "../db";
+import { db, ddb } from "../db";
 import sql from "sql";
 import LRU from "lru-cache";
 import matchSorter from "match-sorter";
@@ -54,9 +51,7 @@ function getClasses(e) {
 
 // {err?, data: TableData, name: TableName, columns: TableColumnNames}
 function addExcelFile(e, filePath) {
-  const {
-    name
-  } = path.parse(filePath);
+  const { name } = path.parse(filePath);
   const workbook = XLSX.readFile(filePath);
   let data = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
   if (data.length === 0) {
@@ -107,10 +102,22 @@ function addExcelFile(e, filePath) {
 function saveTable(e, name, theClass) {
   const { data, columns } = store.get(LAST_TABLE_DATA);
   const table = db.addTable(name);
-  table.set("name", name).set("columns", columns).set("data", data).write();
-  ddb.get("tables").push(name).write();
+  table
+    .set("name", name)
+    .set("columns", columns)
+    .set("data", data)
+    .write();
+  ddb
+    .get("tables")
+    .push(name)
+    .write();
   if (theClass !== "未分类")
-    ddb.get("classes").find(c => c.name === theClass).get("tables").push(name).write();
+    ddb
+      .get("classes")
+      .find(c => c.name === theClass)
+      .get("tables")
+      .push(name)
+      .write();
   e.sender.send(SAVE_TABLE_RETURN, { createOk: true, insertOk: true });
   getClasses(e);
 }
@@ -138,19 +145,22 @@ function saveTableNameChange(e, { oldName, newName }) {
   try {
     db.changeTableName(oldName, newName);
   } catch (err) {
-    e.sender.send(SAVE_TABLE_NAME_CHANGE_RETURN, { ok: false, err: err.toString() });
+    e.sender.send(SAVE_TABLE_NAME_CHANGE_RETURN, {
+      ok: false,
+      err: err.toString()
+    });
     return;
   }
   const classes = ddb.get("classes").value();
   const tables = ddb.get("tables").value();
   for (let i = 0; i < classes.length; i++) {
     let j;
-    if ((j = classes[i].tables.findIndex((t) => t === oldName)) !== -1) {
+    if ((j = classes[i].tables.findIndex(t => t === oldName)) !== -1) {
       classes[i].tables[j] = newName;
       break;
     }
   }
-  const i = tables.findIndex((t) => t === oldName);
+  const i = tables.findIndex(t => t === oldName);
   if (i !== -1) {
     tables[i] = newName;
   }
@@ -159,15 +169,25 @@ function saveTableNameChange(e, { oldName, newName }) {
   e.sender.send(SAVE_TABLE_NAME_CHANGE_RETURN, { ok: true });
 }
 
-saveTableNameChange = enhanceRemoveCache(saveTableNameChange, (args) => args[1].oldName);
+saveTableNameChange = enhanceRemoveCache(
+  saveTableNameChange,
+  args => args[1].oldName
+);
 
 // {ok: Bool, err?}
 function saveTableDataChange(e, { data, columns, table }) {
-  db.getTable(table).set("columns", columns).set("data", data).write();
+  db
+    .getTable(table)
+    .set("columns", columns)
+    .set("data", data)
+    .write();
   e.sender.send(SAVE_TABLE_DATA_CHANGE_RETURN, { ok: true });
 }
 
-saveTableDataChange = enhanceRemoveCache(saveTableDataChange, (args) => args[1].table);
+saveTableDataChange = enhanceRemoveCache(
+  saveTableDataChange,
+  args => args[1].table
+);
 
 // {ok: Bool, err?}
 function deleteTable(e, table) {
@@ -177,14 +197,22 @@ function deleteTable(e, table) {
     e.sender.send(DELETE_TABLE_RETURN, { ok: false, err: err.toString() });
     return;
   }
-  ddb.get("tables").remove(t => t === table).write();
-  const cls = ddb.get("classes").find(c => c.tables.findIndex(t => t === table) !== -1);
+  ddb
+    .get("tables")
+    .remove(t => t === table)
+    .write();
+  const cls = ddb
+    .get("classes")
+    .find(c => c.tables.findIndex(t => t === table) !== -1);
   if (cls.value())
-    cls.get("tables").remove(t => t === table).write();
+    cls
+      .get("tables")
+      .remove(t => t === table)
+      .write();
   e.sender.send(DELETE_TABLE_RETURN, { ok: true });
 }
 
-deleteTable = enhanceRemoveCache(deleteTable, (args) => args[1]);
+deleteTable = enhanceRemoveCache(deleteTable, args => args[1]);
 
 // [{ table: String, fields: [field1, field2, ...]}]
 function getTableField(e, sync) {
@@ -226,7 +254,10 @@ function cacheGetTableData(name) {
   if (table) {
     return table;
   }
-  table = db.getTable(name).get("data").value();
+  table = db
+    .getTable(name)
+    .get("data")
+    .value();
   cache.set(name, table);
   return table;
 }

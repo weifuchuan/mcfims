@@ -1,9 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { observable,autorun } from "mobx";
+import { observable, autorun } from "mobx";
 import { Collapse, Layout, Input, Card, Tag, Menu } from "antd";
 import { ipcRenderer } from "electron";
-import { GET_TABLE_FIELD, GET_TABLE_FIELD_RETURN } from "../../../common/channel";
+import {
+  GET_TABLE_FIELD,
+  GET_TABLE_FIELD_RETURN
+} from "../../../common/channel";
 import _ from "lodash";
 import { WithContext as ReactTags } from "react-tag-input";
 import matchSorter from "match-sorter";
@@ -38,19 +41,29 @@ export default observer(
           case SEARCH_TYPE.COMMON:
             data = this.state.tags[SEARCH_TYPE.COMMON].map(tag => {
               const [table, field] = tag.text.split("：");
-              return {table, field};
+              return { table, field };
             });
             this.props.onSearch(type, key, data);
         }
       };
 
-      this.handleTagDelete = (i) => {
-        this.state.tags[SEARCH_TYPE.COMMON] = observable(this.state.tags[SEARCH_TYPE.COMMON].filter((tag, index) => index !== i));
+      this.handleTagDelete = i => {
+        this.state.tags[SEARCH_TYPE.COMMON] = observable(
+          this.state.tags[SEARCH_TYPE.COMMON].filter(
+            (tag, index) => index !== i
+          )
+        );
       };
 
-      this.handleTagAddition = (tag) => {
-        if (this.state.suggestions.findIndex(s => s.id === tag.id && s.text === tag.text) !== -1
-          && this.state.tags[SEARCH_TYPE.COMMON].findIndex(s => s.id === tag.id && s.text === tag.text) === -1)
+      this.handleTagAddition = tag => {
+        if (
+          this.state.suggestions.findIndex(
+            s => s.id === tag.id && s.text === tag.text
+          ) !== -1 &&
+          this.state.tags[SEARCH_TYPE.COMMON].findIndex(
+            s => s.id === tag.id && s.text === tag.text
+          ) === -1
+        )
           this.state.tags[SEARCH_TYPE.COMMON].push(tag);
       };
 
@@ -77,10 +90,10 @@ export default observer(
         this.state.suggestions = suggestions;
       });
 
-      autorun(()=>{
-        if(store.selectedSearch){
+      autorun(() => {
+        if (store.selectedSearch) {
           ipcRenderer.send(GET_TABLE_FIELD);
-          store.selectedSearch=false;
+          store.selectedSearch = false;
         }
       });
 
@@ -91,7 +104,9 @@ export default observer(
 
       this.addTableField = (type, table, field) => {
         const d = `${table}：${field}`;
-        if (-1 === this.state.tags[SEARCH_TYPE.COMMON].findIndex(t => t.id === d)) {
+        if (
+          -1 === this.state.tags[SEARCH_TYPE.COMMON].findIndex(t => t.id === d)
+        ) {
           let fuck;
           if ((fuck = this.state.suggestions.find(t => t.id === d))) {
             this.state.tags[SEARCH_TYPE.COMMON].push(fuck);
@@ -100,9 +115,10 @@ export default observer(
       };
 
       this.filterSuggestions = (textInputValue, possibleSuggestionsArray) => {
-        return matchSorter(possibleSuggestionsArray, textInputValue, { keys: ["text"] });
+        return matchSorter(possibleSuggestionsArray, textInputValue, {
+          keys: ["text"]
+        });
       };
-
     }
 
     render() {
@@ -113,19 +129,13 @@ export default observer(
               <ISearch
                 placeholder="关键字"
                 enterButton="搜索"
-                onSearch={value =>
-                  this.search(SEARCH_TYPE.COMMON, value)
-                }
+                onSearch={value => this.search(SEARCH_TYPE.COMMON, value)}
               />
             </div>
             <Card
               title="相关表格字段"
               extra={
-                <a
-                  onClick={() =>
-                    this.clearTableField(SEARCH_TYPE.COMMON)
-                  }
-                >
+                <a onClick={() => this.clearTableField(SEARCH_TYPE.COMMON)}>
                   清空
                 </a>
               }
@@ -161,73 +171,67 @@ export default observer(
               <Menu
                 mode="inline"
                 openKeys={this.state.openKeys[SEARCH_TYPE.COMMON].slice()}
-                onOpenChange={(openKeys) => this.onOpenChange(SEARCH_TYPE.COMMON, openKeys)}
+                onOpenChange={openKeys =>
+                  this.onOpenChange(SEARCH_TYPE.COMMON, openKeys)
+                }
                 style={{ width: "100%" }}
                 inlineIndent={10}
               >
-                {
-                  store.classes.map((cls, i) => {
-                    return (
-                      <SubMenu key={cls.name} title={cls.name}>
-                        {
-                          cls.tables.map(t => {
-                            const tf = this.state.tableFields.find(tf => tf.table === t);
-                            return (
-                              tf ? (
-                                  <SubMenu key={t} title={t}>
-                                    {
-                                      tf.fields
-                                        .map(f => {
-                                          return (
-                                            <Item key={f} onClick={e => {
-                                              // e.preventDefault();
-                                              this.addTableField(
-                                                SEARCH_TYPE.COMMON,
-                                                t,
-                                                f
-                                              );
-                                            }}>{f}</Item>
-                                          );
-                                        })
-                                    }
-                                  </SubMenu>
-                                )
-                                : null
-                            );
-                          })
-                        }
-                      </SubMenu>
-                    );
-                  })
-                }
-                <SubMenu key={"未分类"} title={"[未分类]"}>
-                  {
-                    store.otherTables.map(t => {
-                      const tf = this.state.tableFields.find(tf => tf.table === t);
-                      return (
-                        tf ? (
-                            <SubMenu key={t} title={t}>
-                              {
-                                tf.fields
-                                  .map(f => {
-                                    return (
-                                      <Item key={f} onClick={e => {
-                                        // e.preventDefault();
-                                        this.addTableField(
-                                          SEARCH_TYPE.COMMON,
-                                          t,
-                                          f
-                                        );
-                                      }}>{f}</Item>
+                {store.classes.map((cls, i) => {
+                  return (
+                    <SubMenu key={cls.name} title={cls.name}>
+                      {cls.tables.map(t => {
+                        const tf = this.state.tableFields.find(
+                          tf => tf.table === t
+                        );
+                        return tf ? (
+                          <SubMenu key={t} title={t}>
+                            {tf.fields.map(f => {
+                              return (
+                                <Item
+                                  key={f}
+                                  onClick={e => {
+                                    // e.preventDefault();
+                                    this.addTableField(
+                                      SEARCH_TYPE.COMMON,
+                                      t,
+                                      f
                                     );
-                                  })
-                              }
-                            </SubMenu>
-                          )
-                          : null
-                      );
-                    })
-                  }
+                                  }}
+                                >
+                                  {f}
+                                </Item>
+                              );
+                            })}
+                          </SubMenu>
+                        ) : null;
+                      })}
+                    </SubMenu>
+                  );
+                })}
+                <SubMenu key={"未分类"} title={"[未分类]"}>
+                  {store.otherTables.map(t => {
+                    const tf = this.state.tableFields.find(
+                      tf => tf.table === t
+                    );
+                    return tf ? (
+                      <SubMenu key={t} title={t}>
+                        {tf.fields.map(f => {
+                          return (
+                            <Item
+                              key={f}
+                              onClick={e => {
+                                // e.preventDefault();
+                                this.addTableField(SEARCH_TYPE.COMMON, t, f);
+                              }}
+                            >
+                              {f}
+                            </Item>
+                          );
+                        })}
+                      </SubMenu>
+                    ) : null;
+                  })}
                 </SubMenu>
               </Menu>
             </Card>
