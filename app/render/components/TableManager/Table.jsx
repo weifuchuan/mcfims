@@ -139,7 +139,7 @@ export default observer(
           this.selfState.newTableName === "" ||
           this.selfState.newTableName === this.selfState.table ||
           store.tables.findIndex(t => t === this.selfState.newTableName) !==
-            -1 ||
+          -1 ||
           store.specificTables.findIndex(
             t => t === this.selfState.newTableName
           ) !== -1
@@ -168,7 +168,7 @@ export default observer(
             const i = store.tables.findIndex(t => t === oldName);
             this.selfState.table = store.tables[
               i
-            ] = this.selfState.newTableName;
+              ] = this.selfState.newTableName;
             message.success("修改成功");
           } else {
             message.error(`修改失败：${err}`);
@@ -247,6 +247,7 @@ export default observer(
         this.selfState.editing = false;
         this.selfState.filters.clear();
         let i = store.tables.findIndex(t => t === table);
+        if (i === -1) return;
         store.tables.splice(i, 1);
         for (let j = 0; j < store.classes.length; j++) {
           if (
@@ -319,10 +320,10 @@ export default observer(
               onGridRowsUpdated={this.handleGridRowsUpdated}
               onAddFilter={this.handleFilterChange}
               onClearFilters={this.onClearFilters}
-              toolbar={<Toolbar enableFilter={true} />}
+              toolbar={<Toolbar enableFilter={true}/>}
             />
           )}
-          <ModalLoading loading={this.selfState.handling} title={"处理中..."} />
+          <ModalLoading loading={this.selfState.handling} title={"处理中..."}/>
         </div>
       );
     }

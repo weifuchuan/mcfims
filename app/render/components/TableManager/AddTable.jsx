@@ -73,8 +73,8 @@ export default observer(class AddTable extends React.Component {
     };
 
     this.handle = () => {
-      if (window.confirm("你想加入表格\"" + this.selfState.selectedFileS + "\"吗？")) {
-        ipcRenderer.send(ADD_EXCEL_FILE, this.selfState.selectedFileS);
+      if (window.confirm("你想加入表格\"" + this.selfState.selectedFile + "\"吗？")) {
+        ipcRenderer.send(ADD_EXCEL_FILE, this.selfState.selectedFile);
         this.selfState.handling = true;
       }
     };
@@ -305,7 +305,7 @@ export default observer(class AddTable extends React.Component {
                                 <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
                                   <Button type="primary" onClick={this.handleS}
                                           loading={this.selfState.handling}>加入</Button>
-                                  <Button style={{ marginLeft: "1em" }} onClick={this.drop}>放弃</Button>
+                                  <Button style={{ marginLeft: "1em" }} onClick={this.dropS}>放弃</Button>
                                 </div>
                               </div>
                             )
