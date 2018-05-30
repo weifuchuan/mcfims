@@ -115,9 +115,11 @@ export default observer(
       };
 
       this.filterSuggestions = (textInputValue, possibleSuggestionsArray) => {
-        return matchSorter(possibleSuggestionsArray, textInputValue, {
+        const sugg = matchSorter(possibleSuggestionsArray, textInputValue, {
           keys: ["text"]
         });
+        return sugg.filter(s => -1 === this.state.tags[SEARCH_TYPE.COMMON]
+          .findIndex(t => t.text === s.text));
       };
     }
 
