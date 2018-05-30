@@ -74,7 +74,12 @@ export default observer(class AddTable extends React.Component {
 
     this.saveTable = () => {
       if (-1 !== store.specificTables.indexOf(this.selfState.tableName)) {
-        window.alert(`表名与特定表格冲突：${store.specificTables}`);
+        if (window.confirm(`表名与特定表格冲突：${store.specificTables}。
+建议对此文件使用特定模式导入。
+仍然要保存此文件？`)){
+          this.selfState.handling = true;
+          ipcRenderer.send(SAVE_TABLE, this.selfState.tableName, this.selfState.tableClass);
+        }
         return;
       }
       if (window.confirm(`保存表格"${this.selfState.tableName}"（${this.selfState.tableClass}）？`)) {

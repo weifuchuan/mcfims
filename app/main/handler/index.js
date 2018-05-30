@@ -17,6 +17,7 @@ import {
   SEARCH_RETURN
 } from "../../common/channel";
 import SEARCH_TYPE from "../../common/searchType";
+import kits from './specificTableKit';
 
 export {
   getClasses,

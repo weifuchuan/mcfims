@@ -7,6 +7,7 @@ import { Route, Control } from "react-keeper";
 import TableManager from "./components/TableManager";
 import Search from "./components/Search";
 import LOGO_IMG from "./assert/logo";
+import { ipcRenderer } from "electron";
 
 const store = window.store;
 
@@ -68,12 +69,13 @@ export default observer(
               <Menu.Item key="2">搜索</Menu.Item>
             </Menu>
           </Header>
-          <Route index cache path={"/manager"} component={TableManager} />
-          <Route cache path={"/search"} component={Search} />
+          <Route index cache path={"/manager"} component={TableManager}/>
+          <Route cache path={"/search"} component={Search}/>
         </Layout>
       );
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+    }
   }
 );

@@ -1,12 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { observable } from "mobx";
 import { List } from "antd";
 import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 
-@observer
-export default class Content extends React.Component {
+export default observer(class Content extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -78,7 +76,7 @@ export default class Content extends React.Component {
                   />
                 </div>
               ) : (
-                <div />
+                <div/>
               )}
             </List.Item>
           )}
@@ -86,4 +84,4 @@ export default class Content extends React.Component {
       </div>
     );
   }
-}
+});

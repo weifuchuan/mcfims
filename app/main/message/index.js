@@ -23,7 +23,8 @@ import {
   saveTableDataChange,
   deleteTable,
   getTableField,
-  search
+  search,
+  test
 } from "../handler";
 
 ipcMain.on(GET_CLASSES, getClasses);
