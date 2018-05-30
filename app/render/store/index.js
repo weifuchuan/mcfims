@@ -13,6 +13,7 @@ const store = observable({
   classes: [],
   tables: [],
   specificTables: [],
+  specificTableFiles:[],
   goTableState: {
     forceUpdateTableComponent: false,
     shouldVisitTable: ""
@@ -42,7 +43,8 @@ ipcRenderer.send(GET_CLASSES);
 ipcRenderer.on(GET_CLASSES_RETURN, (event, {
   classes,
   tables,
-  specificTables
+  specificTables,
+  specificTableFiles,
 }) => {
   store.classes.clear();
   store.classes.push(...classes.map(c => observable(c)));
@@ -50,6 +52,8 @@ ipcRenderer.on(GET_CLASSES_RETURN, (event, {
   store.tables.push(...tables);
   store.specificTables.clear();
   store.specificTables.push(...specificTables);
+  store.specificTableFiles.clear();
+  store.specificTableFiles.push(...specificTableFiles);
 });
 
 window.store = store;

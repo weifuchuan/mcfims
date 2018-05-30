@@ -43,10 +43,12 @@ function getClasses(e) {
   const classes = ddb.get("classes").value();
   const tables = ddb.get("tables").value();
   const specificTables = ddb.get("specificTables").value();
+  const specificTableFiles = ddb.get('specificTableFiles').value();
   e.sender.send(GET_CLASSES_RETURN, {
     classes,
     tables,
-    specificTables
+    specificTables,
+    specificTableFiles,
   });
 }
 

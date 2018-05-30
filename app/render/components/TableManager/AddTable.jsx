@@ -1,15 +1,15 @@
-import React from 'react'
-import {observable} from 'mobx'
-import {observer} from 'mobx-react'
-import {Button, Input, Select, Tabs, message} from "antd";
-import {ipcRenderer, remote} from "electron"
-import {ADD_EXCEL_FILE, ADD_EXCEL_FILE_RETURN, SAVE_TABLE, SAVE_TABLE_RETURN} from "../../../common/channel";
-import ModalLoading from "../ModalLoading"
-import ReactTable from 'react-table'
-import _ from 'lodash';
+import React from "react";
+import { observable } from "mobx";
+import { observer } from "mobx-react";
+import { Button, Input, Select, Tabs, message,  Radio } from "antd";
+import { ipcRenderer, remote } from "electron";
+import { ADD_EXCEL_FILE, ADD_EXCEL_FILE_RETURN, SAVE_TABLE, SAVE_TABLE_RETURN } from "../../../common/channel";
+import ModalLoading from "../ModalLoading";
+import ReactTable from "react-table";
+import _ from "lodash";
 import ScrollArea from "react-scrollbar";
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 const store = window.store;
 
@@ -26,17 +26,18 @@ export default observer(class AddTable extends React.Component {
       tableName: "",
       tableData: [],
       tableColumns: [],
-      tableClass: '未分类',
+      tableClass: "未分类",
+      specificTable: ""
     });
 
     this.addFile = () => {
-      const {dialog} = remote;
+      const { dialog } = remote;
       dialog.showOpenDialog({
         title: "选择EXCEL表格文件",
         buttonLabel: "确认",
-        filters: [{name: "excel", extensions: ["xls", 'xlsx']}],
+        filters: [{ name: "excel", extensions: ["xls", "xlsx"] }],
         properties: [
-          'openFile',
+          "openFile"
         ]
       }, filePaths => {
         if (filePaths) {
@@ -60,10 +61,10 @@ export default observer(class AddTable extends React.Component {
         message.error(resp.err);
         return;
       }
-      const {data, name, columns} = resp;
+      const { data, name, columns } = resp;
       this.selfState.tableName = name;
       this.selfState.tableData = data;
-      this.selfState.tableColumns = columns.map(column => ({Header: column, accessor: column}));
+      this.selfState.tableColumns = columns.map(column => ({ Header: column, accessor: column }));
     });
 
     this.drop = () => {
@@ -76,7 +77,7 @@ export default observer(class AddTable extends React.Component {
       if (-1 !== store.specificTables.indexOf(this.selfState.tableName)) {
         if (window.confirm(`表名与特定表格冲突：${store.specificTables}。
 建议对此文件使用特定模式导入。
-仍然要保存此文件？`)){
+仍然要保存此文件？`)) {
           this.selfState.handling = true;
           ipcRenderer.send(SAVE_TABLE, this.selfState.tableName, this.selfState.tableClass);
         }
@@ -96,33 +97,33 @@ export default observer(class AddTable extends React.Component {
         message.error(resp.err);
       } else {
         this.saveSuccess();
-        this.selfState.tableName = '';
+        this.selfState.tableName = "";
         this.selfState.tableData = [];
         this.selfState.tableColumns = [];
-        this.selfState.tableClass = '未分类';
+        this.selfState.tableClass = "未分类";
       }
-    })
+    });
   }
 
   render() {
     return (
       <div style={{
         flex: 1, display: "flex",
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%"
       }}>
         <Tabs defaultActiveKey="1" style={{
           flex: 1,
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%"
         }}>
           <TabPane tab="标准模式" key="1">
-            <div style={Object.assign({}, styles.full, {display: "flex", flexDirection: "column"})}>
+            <div style={Object.assign({}, styles.full, { display: "flex", flexDirection: "column" })}>
               <ScrollArea
                 style={styles.full}
                 smoothScrolling={true}
               >
-                <div draggable={true} className={"border-of-drag-file"} style={{color: "#3d27ff"}}
+                <div draggable={true} className={"border-of-drag-file"} style={{ color: "#3d27ff" }}
                      ref={r => this.dragFile = r}
                      onClick={this.addFile}
                 >
@@ -131,19 +132,19 @@ export default observer(class AddTable extends React.Component {
                 {
                   this.selfState.selectedFile.length > 0
                     ? (
-                      <div style={{display: "flex", width: "100%", flexDirection: "column"}}>
+                      <div style={{ display: "flex", width: "100%", flexDirection: "column" }}>
                         <div>
                           已选择：{this.selfState.selectedFile}
                         </div>
-                        <div style={{width: "100%", display: "flex", justifyContent: "flex-end"}}>
+                        <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
                           <Button type="primary" onClick={this.handle} loading={this.selfState.handling}>加入</Button>
-                          <Button style={{marginLeft: "1em"}} onClick={this.drop}>放弃</Button>
+                          <Button style={{ marginLeft: "1em" }} onClick={this.drop}>放弃</Button>
                         </div>
                       </div>
                     )
                     : null
                 }
-                <div style={{display: "flex", justifyContent: "space-between", width: "100%"}}>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                   <Input addonBefore={"表名"} value={this.selfState.tableName}
                          onChange={e => {
                            this.selfState.tableName = e.target.value;
@@ -157,8 +158,8 @@ export default observer(class AddTable extends React.Component {
                     <Select.Option value="未分类">未分类</Select.Option>
                   </Select>
                 </div>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
-                  <div style={{paddingLeft: "1em"}}><span>预览</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                  <div style={{ paddingLeft: "1em" }}><span>预览</span></div>
                   <Button type="primary" onClick={this.saveTable}
                           disabled={this.selfState.tableName.length === 0
                           || this.selfState.tableData.length === 0
@@ -175,7 +176,15 @@ export default observer(class AddTable extends React.Component {
             </div>
           </TabPane>
           <TabPane tab="特定模式" key="2">
-            <div style={styles.full}>
+            <div className={"full"} style={{ display: "flex", flexDirection: "column" }}>
+              <Radio.Group onChange={v => this.selfState.specificTable = v}
+                           value={this.selfState.specificTable}>
+                {
+                  store.specificTables.map((t, i) => {
+                    return <Radio key={i} value={t}>{t}</Radio>;
+                  })
+                }
+              </Radio.Group>
 
             </div>
           </TabPane>
@@ -196,7 +205,7 @@ export default observer(class AddTable extends React.Component {
     this.dragFile.ondrop = (e) => {
       e.preventDefault();
       for (let f of e.dataTransfer.files) {
-        const ps = f.path.split('.');
+        const ps = f.path.split(".");
         if (ps.length > 0 && (ps[ps.length - 1].toLowerCase() === "xlsx" || ps[ps.length - 1].toLowerCase() === "xls")) {
           this.selfState.selectedFile = f.path;
         } else {
@@ -205,14 +214,14 @@ export default observer(class AddTable extends React.Component {
         return;
       }
       return false;
-    }
+    };
   }
 
-})
+});
 
 const styles = {
   full: {
     width: "100%",
-    height: "100%",
+    height: "100%"
   }
 };

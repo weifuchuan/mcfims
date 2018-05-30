@@ -7,7 +7,9 @@
 <PROJECT_ROOT>/release/.*
 <PROJECT_ROOT>/dll/.*
 <PROJECT_ROOT>/release/.*
+<PROJECT_ROOT>/internals/.*
 <PROJECT_ROOT>/git/.*
+.*node_modules/.*
 
 [include]
 
