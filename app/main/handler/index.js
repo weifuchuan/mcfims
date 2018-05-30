@@ -17,7 +17,7 @@ import {
   SEARCH_RETURN
 } from "../../common/channel";
 import SEARCH_TYPE from "../../common/searchType";
-import kits from './specificTableKit';
+import kits from "./specificTableKit";
 
 export {
   getClasses,
@@ -35,6 +35,7 @@ export {
 sql.setDialect("sqlite");
 const store = new Map();
 const LAST_TABLE_DATA = "lastTableData";
+const LAST_TABLE_DATA_S = "lastTableDataS";
 const numberRegExp = /^[0-9]{1,8}(\.[0-9]+)?$/;
 const intRegExp = /^[0-9]+$/;
 
@@ -43,17 +44,27 @@ function getClasses(e) {
   const classes = ddb.get("classes").value();
   const tables = ddb.get("tables").value();
   const specificTables = ddb.get("specificTables").value();
-  const specificTableFiles = ddb.get('specificTableFiles').value();
+  const specificTableFiles = ddb.get("specificTableFiles").value();
   e.sender.send(GET_CLASSES_RETURN, {
     classes,
     tables,
     specificTables,
-    specificTableFiles,
+    specificTableFiles
   });
 }
 
 // {err?, data: TableData, name: TableName, columns: TableColumnNames}
-function addExcelFile(e, filePath) {
+function addExcelFile(e, filePath, isS, specificTable) {
+  if (isS) {
+    try {
+      const { columns, rows } = kits.get(specificTable)(filePath);
+      e.sender.send(ADD_EXCEL_FILE_RETURN, { data: rows, columns }, true);
+      store.set(LAST_TABLE_DATA_S, { columns, rows });
+    } catch (err) {
+      e.sender.send(ADD_EXCEL_FILE_RETURN, { err: err.toString() }, true);
+    }
+    return;
+  }
   const { name } = path.parse(filePath);
   const workbook = XLSX.readFile(filePath);
   let data = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
@@ -102,8 +113,15 @@ function addExcelFile(e, filePath) {
 }
 
 // {err?, createOk: Bool, insertOk: Bool}
-function saveTable(e, name, theClass) {
-  const { data, columns } = store.get(LAST_TABLE_DATA);
+function saveTable(e, name, theClass, isS) {
+  let data, columns;
+  if (isS) {
+    data = store.get(LAST_TABLE_DATA_S).rows;
+    columns = store.get(LAST_TABLE_DATA_S).columns;
+  } else {
+    data = store.get(LAST_TABLE_DATA).data;
+    columns = store.get(LAST_TABLE_DATA).columns;
+  }
   const table = db.addTable(name);
   table
     .set("name", name)
@@ -121,7 +139,7 @@ function saveTable(e, name, theClass) {
       .get("tables")
       .push(name)
       .write();
-  e.sender.send(SAVE_TABLE_RETURN, { createOk: true, insertOk: true });
+  e.sender.send(SAVE_TABLE_RETURN, { createOk: true, insertOk: true }, isS);
   getClasses(e);
 }
 

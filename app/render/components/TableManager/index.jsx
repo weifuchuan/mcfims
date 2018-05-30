@@ -53,7 +53,7 @@ export default observer(class TableManager extends React.Component {
                         {
                           item.tables.map((t) => {
                             return (
-                              <Menu.Item key={t}>{t}</Menu.Item>
+                              <Menu.Item key={t} onClick={this.selectTable}>{t}</Menu.Item>
                             )
                           })
                         }

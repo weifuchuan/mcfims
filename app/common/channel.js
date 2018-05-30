@@ -1,11 +1,11 @@
 export const GET_CLASSES = "getClasses"; //
 export const GET_CLASSES_RETURN = "getClassesReturn"; // { classes:[], tables:[], specificTables:[] }
 
-export const ADD_EXCEL_FILE = "addExcelFile"; // filePath: String
-export const ADD_EXCEL_FILE_RETURN = "addExcelFileReturn"; // {err?, data: TableData, name: TableName, columns: TableColumnNames}
+export const ADD_EXCEL_FILE = "addExcelFile"; // filePath: String, isS: Bool, specificTable
+export const ADD_EXCEL_FILE_RETURN = "addExcelFileReturn"; // {err?, data: TableData, name: TableName, columns: TableColumnNames}, isS: Bool
 
-export const SAVE_TABLE = "saveTable"; // name: String, theClass: String
-export const SAVE_TABLE_RETURN = "saveTableReturn"; // {err?, createOk: Bool, insertOk: Bool}
+export const SAVE_TABLE = "saveTable"; // name: String, theClass: String, isS: Bool
+export const SAVE_TABLE_RETURN = "saveTableReturn"; // {err?, createOk: Bool, insertOk: Bool}, isS: Bool
 
 export const SAVE_CLASS_CHANGE = "saveClassChange"; // {classes: []}
 export const SAVE_CLASS_CHANGE_RETURN = "saveClassChangeReturn"; // {ok: Bool}
