@@ -51,10 +51,15 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ]
-    },
+	  "target": [
+		{
+		  "target": "msi",
+		  "arch": [
+			"ia32"
+		  ]
+		}
+	  ]
+	},
     "linux": {
       "target": [
         "deb",
